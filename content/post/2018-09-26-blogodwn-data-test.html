@@ -12,9 +12,8 @@ tags:
 
 
 
-<p>A quick test of loading in new data and sending to blog.</p>
-<pre class="r"><code>colnames(teach.salaries) &lt;- c(&quot;Location&quot;, &quot;Indicator&quot;, &quot;Subject&quot;, &quot;Measure&quot;, &quot;Frequency&quot;, &quot;Time&quot;, &quot;Value&quot;, &quot;Flag Codes&quot;)
-x &lt;- teach.salaries %&gt;% group_by() %&gt;% filter(Subject == &quot;PRY_START&quot;, Location == &quot;AUS&quot; | Location == &quot;USA&quot;) %&gt;% select(Location, Time, Value)
+<p>A quick test of loading in new data and sending to blog. First we clean the import, then we plot the function</p>
+<pre class="r"><code>
 ggplot(x, aes(Location,  Value)) + geom_col(aes(colour = factor(Location))) </code></pre>
 <div class="figure"><span id="fig:column"></span>
 <img src="/post/2018-09-26-blogodwn-data-test_files/figure-html/column-1.png" alt="A column plot" width="672" />
