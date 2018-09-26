@@ -21,8 +21,8 @@ teach.salaries <- read.csv("C:/Users/squin/Downloads/DP_LIVE_06092018050003186.c
 A quick test of loading in new data and sending to blog.
 
 
-```{r}
+```{r column, fig.cap='A column plot', tidy=FALSE}
 colnames(teach.salaries) <- c("Location", "Indicator", "Subject", "Measure", "Frequency", "Time", "Value", "Flag Codes")
 x <- teach.salaries %>% group_by() %>% filter(Subject == "PRY_START", Location == "AUS" | Location == "USA") %>% select(Location, Time, Value)
-ggplot(x, aes(Time, Value)) + geom_point(aes(colour = factor(Location))) 
+ggplot(x, aes(Location,  Value)) + geom_col(aes(colour = factor(Location))) 
 ```
