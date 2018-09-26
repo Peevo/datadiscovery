@@ -1,0 +1,19 @@
+---
+title: Blogdown, data test
+author: ''
+Summary: A quick csv import and graph test
+date: '2018-09-26'
+slug: blogodwn-data-test
+categories:
+  - R
+tags:
+  - blogdown
+---
+
+
+
+<p>A quick test of loading in new data and sending to blog.</p>
+<pre class="r"><code>colnames(teach.salaries) &lt;- c(&quot;Location&quot;, &quot;Indicator&quot;, &quot;Subject&quot;, &quot;Measure&quot;, &quot;Frequency&quot;, &quot;Time&quot;, &quot;Value&quot;, &quot;Flag Codes&quot;)
+x &lt;- teach.salaries %&gt;% group_by() %&gt;% filter(Subject == &quot;PRY_START&quot;, Location == &quot;AUS&quot; | Location == &quot;USA&quot;) %&gt;% select(Location, Time, Value)
+ggplot(x, aes(Time, Value)) + geom_point(aes(colour = factor(Location))) </code></pre>
+<p><img src="/post/2018-09-26-blogodwn-data-test_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
