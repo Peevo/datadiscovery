@@ -1,0 +1,27 @@
+---
+title: "This is a test"
+author: ''
+date: '2018-09-26'
+summary: "A test example of scattplot and code"
+slug: this-is-a-test
+categories:
+  - R
+tags: []
+---
+
+
+A quick test example of the cars data using a simple ggplot scatter with glm smoothing function.  .
+
+Code looks bad on front page.
+ # <!--more--> does not work
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+library(ggplot2)
+```
+
+
+```{r scatter, fig.cap='A scatter plot', tidy=FALSE}
+ggplot(cars, aes(dist, speed)) + geom_point() + geom_smooth() + ggtitle("Car Speed vs Stopping Distance")
+
+```

@@ -1,0 +1,23 @@
+---
+title: "This is a test"
+author: ''
+date: '2018-09-26'
+summary: "A test example of scattplot and code"
+slug: this-is-a-test
+categories:
+  - R
+tags: []
+---
+
+
+
+<p>A quick test example of the cars data using a simple ggplot scatter with glm smoothing function. .</p>
+<p>Code looks bad on front page. # <!--more--> does not work</p>
+<pre class="r"><code>ggplot(cars, aes(dist, speed)) + geom_point() + geom_smooth() + ggtitle(&quot;Car Speed vs Stopping Distance&quot;)
+## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<div class="figure"><span id="fig:scatter"></span>
+<img src="/post/2018-09-26-this-is-a-test_files/figure-html/scatter-1.png" alt="A scatter plot" width="672" />
+<p class="caption">
+Figure 1: A scatter plot
+</p>
+</div>
