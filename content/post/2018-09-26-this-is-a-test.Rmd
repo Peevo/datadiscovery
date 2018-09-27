@@ -3,6 +3,8 @@ title: "This is a test"
 author: ''
 date: '2018-09-26'
 summary: "A test example of scattplot and code"
+thumbnailImagePosition: left
+thumbnailImage: /images/thumb_scatter1.jpg
 slug: this-is-a-test
 categories:
   - R

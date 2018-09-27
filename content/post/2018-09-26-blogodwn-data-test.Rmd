@@ -1,6 +1,8 @@
 ---
 title: Blogdown, data test
 author: ''
+thumbnailImagePosition: left
+thumbnailImage: /images/thumb_bar1.jpg
 Summary: A quick csv import and graph test
 date: '2018-09-26'
 slug: blogodwn-data-test
@@ -17,13 +19,13 @@ library(tidyr)
 library(ggplot2)
 teach.salaries <- read.csv("C:/Users/squin/Downloads/DP_LIVE_06092018050003186.csv")
 colnames(teach.salaries) <- c("Location", "Indicator", "Subject", "Measure", "Frequency", "Time", "Value", "Flag Codes")
-x <- teach.salaries %>% group_by() %>% filter(Subject == "PRY_START", Location == "AUS" | Location == "USA") %>% select(Location, Time, Value)
+x <- teach.salaries %>% group_by() %>% filter(Subject == "PRY_START", Time == 2015)  %>% select(Location, Time, Value)
 ```
 
 A quick test of loading in new data and sending to blog.  First we clean the import, then we plot the function
 
 
-```{r column, fig.cap='A column plot', tidy=FALSE}
+```{r column, fig.cap='First year teach salaries in USD (2015)', tidy=FALSE}
 
-ggplot(x, aes(Location,  Value)) + geom_col(aes(colour = factor(Location))) 
+ggplot(x, aes(Location,  Value)) + geom_col() + theme(axis.text.x = element_text(angle = 45))
 ```

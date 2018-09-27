@@ -1,0 +1,54 @@
+---
+title: smArt Blog Backdrops
+author: ''
+date: '2018-09-27'
+slug: smart-blog-backdrops
+Summary: "Art through R command lines"
+coverImage: /images/backdrop.png
+coversize: partial
+categories:
+  - R
+tags:
+  - Art
+  - R
+  - spatstat
+---
+
+One of the things I've been most fascinated with in my R learnings is how much beauty there can be in some forms of data visualisations. This stems from an early exposure to things like <a href="https://mediartinnovation.com/2014/06/01/richard-dawkins-biomorphs-1986/" target="_blank">Dawkin's Biomorphs</a> and more recently the fantastic work at <a href href=https://www.r-graph-gallery.com/portfolio/data-art/, target="_blank"> R-graphs Data art portfolio</a>.
+
+Today I'm going to look at some reproducible, open source art from <a href="https://github.com/petrkeil/Blog/blob/master/2016_07_26_R_art_with_spatstat/R_art.Rmd", target="_Blank">Petr Keil</a> to find a serviceable background image for this site.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+library(spatstat)
+```
+
+### Load Packages & Set up our data
+
+```{r}
+library(spatstat)
+ W23 <- as.owin(list(xrange=c(0,4), yrange=c(0,6)))
+```
+
+### Generate the patterns
+```{r}
+set.seed(25031979)
+ rc <- rpoispp(function(x,y){25 * exp(-1.5*(max(y)-y))}, 100, win=W23)
+ rcdist <- distmap(rc, dimyx=c(1200, 800))
+ rc2 <- rpoispp(1/rcdist*50)
+ rcd <- dirichlet(rc2)
+ png(filename = "Figure_2A.png", width=6000, height=4000, res=400)
+  par(mai=c(0,0,0,0))
+ plot(rcdist, legend=FALSE, main="", frame=TRUE, box=FALSE, ribbon=FALSE)
+ plot(rcd, add=T)
+ plot(rc, add=T, col="gray28", pch=19, cex=2.5)
+ plot(rjitter(rc, 0.01), add=T, col="snow", pch=19, cex=0.4)
+ contour(rcdist, add=T, col="white")
+dev.off()
+
+```
+
+And done!  After a bit of cropping and image editing we get:
+
+<img src="/images/backdrop.png">
