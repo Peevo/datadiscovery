@@ -4,7 +4,9 @@ author: ''
 date: '2018-09-27'
 slug: smart-blog-backdrops
 Summary: "Art through R command lines"
-coverImage: /images/backdrop.png
+thumbnailImagePosition: left
+thumbnailImage: /img/backdrop.png
+coverImage: /img/backdrop.png
 coversize: partial
 categories:
   - R
@@ -51,4 +53,4 @@ dev.off()
 
 And done!  After a bit of cropping and image editing we get:
 
-<img src="/images/backdrop.png">
+<img src="/img/backdrop.png">

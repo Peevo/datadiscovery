@@ -2,7 +2,7 @@
 title: Blogdown, data test
 author: ''
 thumbnailImagePosition: left
-thumbnailImage: //i.lensdump.com/i/AIpoYT
+thumbnailImage: /img/thumb_bar1.jpg
 Summary: A quick csv import and graph test
 date: '2018-09-26'
 slug: blogodwn-data-test
