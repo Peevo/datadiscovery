@@ -1,0 +1,109 @@
+---
+title: OECD CPI Analysis and Forecasting - Import and Clean
+author: ''
+date: '2018-10-12'
+slug: oecd-cpi-analysis-import-and-clean
+categories:
+  - R
+tags:
+  - Economics
+  - EDA
+  - Tidy
+---
+
+In this post I'll look at the steps to import, clean and begin modelling a real world dataset exploring longitudinal Consumer Price Index changes for OECD countries. This data has been pulled from <a href="https://www.kaggle.com/oecd-org/oecd-consumer-price-index-of-all-items", target="_Blank">Kaggle</a>.  For this exercise, we'll look at the CPI changes across Australia, New Zealand, United States and Canada.
+
+
+```{r setup, include=FALSE}
+## Load repositories
+knitr::opts_chunk$set(collapse = TRUE)
+library(tidyverse)
+library(ggplot2)
+```
+
+Load in the data via rJSON package and convert to a dataframe.
+
+```{r}
+## Import to AUS object from csv
+AUS <- read_csv("C:/Users/squin/Desktop/Blog/Data/consumer-price-index-of-all-items-in-australia.csv")
+# Check strucure
+str(AUS)
+```
+
+Our value column is listed as a character, so we'll look at that more closely before converting to a number.  
+
+```{r}
+# List unique values, check for inappropriate strings
+unique(AUS$value)
+```
+
+Looks like the import converted the numeric values to strings, we'll convert them to numeric as "Value" (note case sensitivity here).
+
+
+```{r}
+
+#  Set up a new column with converted Values
+AUS$Value <- as.double(AUS$value)
+# Check new column
+unique(AUS$Value)
+tail(AUS)
+```
+
+Values are showing as dbl data, so we'll go ahead and plot the data.
+
+
+```{r}
+ggplot(AUS, aes(x = date, y = Value)) + geom_line()
+
+```
+
+
+Looks good!  We can shorthand this process by piping the code through.  We'll try this with our next file which is canada.
+
+```{r}
+## Import Canada file and set to object CAN
+CAN <- read_csv("C:/Users/squin/Desktop/Blog/Data/consumer-price-index-of-all-items-in-canada.csv") %>%
+    mutate(Value = as.double(value))
+## Plot data to verify
+ggplot(CAN, aes(date, Value)) + geom_line()
+
+```
+
+Whilst both these techniques are fine, if we're working with multiple files it's probably better to load them in en masse.  We can use list.files and lapply to condense the data into a single dataframe.  Within the same piped function, we'll mutate in the nested file data, unnest it, clean and remove unwanted columns
+
+```{r}
+# change set current wd and change wd to our file source.  This is only required if the files are in another directory to your working.
+path <- "C:/Users/squin/Desktop/Blog/Data"
+setwd(path)
+
+# Regex codes required for string matching. \\ escapes the match string as "." is a special character.  $ denotes the end of string.
+imp <- list.files(pattern = "\\.csv$")
+imp
+# Read in CSV files whilst retaining the file names (for row identification), clean up 
+df <- tibble(File = imp) %>% 
+    mutate(Data = lapply(File, read_csv)) %>%
+    unnest(Data) %>%
+    mutate(Value = as.double(value)) %>%
+    select(-realtime_end, -realtime_start, -value)
+    
+head(df)      
+```
+
+This is a good start, but let's make it a bit more readable by replacing the filename with a country shorthand.
+
+```{r}
+df <- df %>%
+  mutate(Country =  c("NZ", "USA", "AUS", "CAN") [grepl("new-zealand", File)+2*grepl("united-states", File)+3*grepl("australia", File)+4*grepl("canada", File)])
+
+df
+```
+
+Great! Let's plot it.
+```{r}
+ggplot(df, aes(x = date, y = Value, colour = Country)) + geom_line()
+
+```
+
+
+
+We now have a dataset ready to go. Next post we'll do some analysis on the full data set.
