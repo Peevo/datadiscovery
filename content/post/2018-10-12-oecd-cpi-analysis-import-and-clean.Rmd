@@ -24,7 +24,7 @@ library(tidyverse)
 library(ggplot2)
 ```
 
-Load in the data via rJSON package and convert to a dataframe.
+Our data is sitting in a unique csv file for each country.  We'll start slow by inspecting the shape of the data and construct a method for pulling/cleaning this information to suit our needs.
 
 ```{r}
 ## Import to AUS object from csv
@@ -109,4 +109,4 @@ ggplot(df, aes(x = date, y = Value, colour = Country)) + geom_line()
 
 
 
-We now have a dataset ready to go. Next post we'll do some analysis on the full data set.
+We now have a dataset ready to go. Next post we'll do some analysis on the full data set and see what sort of insights we can gain.
