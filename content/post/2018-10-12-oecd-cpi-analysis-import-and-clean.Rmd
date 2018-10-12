@@ -5,7 +5,7 @@ date: '2018-10-12'
 slug: oecd-cpi-analysis-import-and-clean
 Summary: "Importing and Cleaning real world data sets"
 thumbnailImagePosition: left
-thumbnailImage: /img/OECD_logo_new.svg.pnd
+thumbnailImage: /img/OECD.jpg
 categories:
   - R
 tags:
@@ -18,7 +18,7 @@ In this post I'll look at the steps to import, clean and begin modelling a real 
 
 
 ```{r setup, include=FALSE}
-## Load repositories
+# Load repositories
 knitr::opts_chunk$set(collapse = TRUE)
 library(tidyverse)
 library(ggplot2)
@@ -27,8 +27,9 @@ library(ggplot2)
 Our data is sitting in a unique csv file for each country.  We'll start slow by inspecting the shape of the data and construct a method for pulling/cleaning this information to suit our needs.
 
 ```{r}
-## Import to AUS object from csv
+# Import to AUS object from csv
 AUS <- read_csv("C:/Users/squin/Desktop/Blog/Data/consumer-price-index-of-all-items-in-australia.csv")
+
 # Check strucure
 str(AUS)
 ```
@@ -44,9 +45,9 @@ Looks like the import converted the numeric values to strings, we'll convert the
 
 
 ```{r}
-
 #  Set up a new column with converted Values
 AUS$Value <- as.double(AUS$value)
+
 # Check new column
 unique(AUS$Value)
 tail(AUS)
@@ -75,13 +76,17 @@ ggplot(CAN, aes(date, Value)) + geom_line()
 Whilst both these techniques are fine, if we're working with multiple files it's probably better to load them in en masse.  We can use list.files and lapply to condense the data into a single dataframe.  Within the same piped function, we'll mutate in the nested file data, unnest it, clean and remove unwanted columns
 
 ```{r}
-# change set current wd and change wd to our file source.  This is only required if the files are in another directory to your working.
+# change set current wd and change wd to our file source.  This is only required if the files 
+# are in another directory to your working.
 path <- "C:/Users/squin/Desktop/Blog/Data"
 setwd(path)
 
-# Regex codes required for string matching. \\ escapes the match string as "." is a special character.  $ denotes the end of string.
+# Regex codes required for string matching. 
+# \\ escapes the match string as "." is a special character.  
+# $ denotes the end of string.
 imp <- list.files(pattern = "\\.csv$")
 imp
+
 # Read in CSV files whilst retaining the file names (for row identification), clean up 
 df <- tibble(File = imp) %>% 
     mutate(Data = lapply(File, read_csv)) %>%
@@ -96,8 +101,9 @@ This is a good start, but let's make it a bit more readable by replacing the fil
 
 ```{r}
 df <- df %>%
-  mutate(Country =  c("NZ", "USA", "AUS", "CAN") [grepl("new-zealand", File)+2*grepl("united-states", File)+3*grepl("australia", File)+4*grepl("canada", File)])
-
+  mutate(Country =  c("NZ", "USA", "AUS", "CAN") [grepl("new-zealand", File)+2*grepl("united-states", File)+3*grepl("australia", File)+4*grepl("canada", File)]) %>%
+  select(-File)
+ 
 df
 ```
 

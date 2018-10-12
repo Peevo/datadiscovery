@@ -5,7 +5,7 @@ date: '2018-10-12'
 slug: oecd-cpi-analysis-import-and-clean
 Summary: "Importing and Cleaning real world data sets"
 thumbnailImagePosition: left
-thumbnailImage: /img/OECD_logo_new.svg.pnd
+thumbnailImage: /img/OECD.jpg
 categories:
   - R
 tags:
@@ -18,7 +18,7 @@ tags:
 
 <p>In this post I’ll look at the steps to import, clean and begin modelling a real world dataset exploring longitudinal Consumer Price Index changes for OECD countries. This data has been pulled from <a href="https://www.kaggle.com/oecd-org/oecd-consumer-price-index-of-all-items", target="_Blank">Kaggle</a>. For this exercise, we’ll look at the CPI changes across Australia, New Zealand, United States and Canada.</p>
 <p>Our data is sitting in a unique csv file for each country. We’ll start slow by inspecting the shape of the data and construct a method for pulling/cleaning this information to suit our needs.</p>
-<pre class="r"><code>## Import to AUS object from csv
+<pre class="r"><code># Import to AUS object from csv
 AUS &lt;- read_csv(&quot;C:/Users/squin/Desktop/Blog/Data/consumer-price-index-of-all-items-in-australia.csv&quot;)
 ## Parsed with column specification:
 ## cols(
@@ -27,6 +27,7 @@ AUS &lt;- read_csv(&quot;C:/Users/squin/Desktop/Blog/Data/consumer-price-index-o
 ##   realtime_start = col_date(format = &quot;&quot;),
 ##   date = col_date(format = &quot;&quot;)
 ## )
+
 # Check strucure
 str(AUS)
 ## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    254 obs. of  4 variables:
@@ -123,10 +124,10 @@ unique(AUS$value)
 ## [202] &quot;114.984391259105&quot; &quot;115.19250780437&quot;  &quot;115.920915712799&quot;
 ## [205] &quot;116.649323621228&quot; &quot;117.169614984391&quot; &quot;117.585848074922&quot;</code></pre>
 <p>Looks like the import converted the numeric values to strings, we’ll convert them to numeric as “Value” (note case sensitivity here).</p>
-<pre class="r"><code>
-#  Set up a new column with converted Values
+<pre class="r"><code>#  Set up a new column with converted Values
 AUS$Value &lt;- as.double(AUS$value)
 ## Warning: NAs introduced by coercion
+
 # Check new column
 unique(AUS$Value)
 ##   [1]         NA   7.804370   7.908429   8.012487   8.116545   8.220604
@@ -196,17 +197,21 @@ ggplot(CAN, aes(date, Value)) + geom_line()
 ## Warning: Removed 60 rows containing missing values (geom_path).</code></pre>
 <p><img src="/post/2018-10-12-oecd-cpi-analysis-import-and-clean_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Whilst both these techniques are fine, if we’re working with multiple files it’s probably better to load them in en masse. We can use list.files and lapply to condense the data into a single dataframe. Within the same piped function, we’ll mutate in the nested file data, unnest it, clean and remove unwanted columns</p>
-<pre class="r"><code># change set current wd and change wd to our file source.  This is only required if the files are in another directory to your working.
+<pre class="r"><code># change set current wd and change wd to our file source.  This is only required if the files 
+# are in another directory to your working.
 path &lt;- &quot;C:/Users/squin/Desktop/Blog/Data&quot;
 setwd(path)
 
-# Regex codes required for string matching. \\ escapes the match string as &quot;.&quot; is a special character.  $ denotes the end of string.
+# Regex codes required for string matching. 
+# \\ escapes the match string as &quot;.&quot; is a special character.  
+# $ denotes the end of string.
 imp &lt;- list.files(pattern = &quot;\\.csv$&quot;)
 imp
 ## [1] &quot;consumer-price-index-all-items-for-new-zealand.csv&quot;      
 ## [2] &quot;consumer-price-index-all-items-for-the-united-states.csv&quot;
 ## [3] &quot;consumer-price-index-of-all-items-in-australia.csv&quot;      
 ## [4] &quot;consumer-price-index-of-all-items-in-canada.csv&quot;
+
 # Read in CSV files whilst retaining the file names (for row identification), clean up 
 df &lt;- tibble(File = imp) %&gt;% 
     mutate(Data = lapply(File, read_csv)) %&gt;%
@@ -256,22 +261,23 @@ head(df)
 ## 6 consumer-price-index-all-items-for-new-zealand.csv 1956-04-01    NA</code></pre>
 <p>This is a good start, but let’s make it a bit more readable by replacing the filename with a country shorthand.</p>
 <pre class="r"><code>df &lt;- df %&gt;%
-  mutate(Country =  c(&quot;NZ&quot;, &quot;USA&quot;, &quot;AUS&quot;, &quot;CAN&quot;) [grepl(&quot;new-zealand&quot;, File)+2*grepl(&quot;united-states&quot;, File)+3*grepl(&quot;australia&quot;, File)+4*grepl(&quot;canada&quot;, File)])
-
+  mutate(Country =  c(&quot;NZ&quot;, &quot;USA&quot;, &quot;AUS&quot;, &quot;CAN&quot;) [grepl(&quot;new-zealand&quot;, File)+2*grepl(&quot;united-states&quot;, File)+3*grepl(&quot;australia&quot;, File)+4*grepl(&quot;canada&quot;, File)]) %&gt;%
+  select(-File)
+ 
 df
-## # A tibble: 2,034 x 4
-##    File                                           date       Value Country
-##    &lt;chr&gt;                                          &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;  
-##  1 consumer-price-index-all-items-for-new-zealan~ 1955-01-01    NA NZ     
-##  2 consumer-price-index-all-items-for-new-zealan~ 1955-04-01    NA NZ     
-##  3 consumer-price-index-all-items-for-new-zealan~ 1955-07-01    NA NZ     
-##  4 consumer-price-index-all-items-for-new-zealan~ 1955-10-01    NA NZ     
-##  5 consumer-price-index-all-items-for-new-zealan~ 1956-01-01    NA NZ     
-##  6 consumer-price-index-all-items-for-new-zealan~ 1956-04-01    NA NZ     
-##  7 consumer-price-index-all-items-for-new-zealan~ 1956-07-01    NA NZ     
-##  8 consumer-price-index-all-items-for-new-zealan~ 1956-10-01    NA NZ     
-##  9 consumer-price-index-all-items-for-new-zealan~ 1957-01-01    NA NZ     
-## 10 consumer-price-index-all-items-for-new-zealan~ 1957-04-01    NA NZ     
+## # A tibble: 2,034 x 3
+##    date       Value Country
+##    &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;  
+##  1 1955-01-01    NA NZ     
+##  2 1955-04-01    NA NZ     
+##  3 1955-07-01    NA NZ     
+##  4 1955-10-01    NA NZ     
+##  5 1956-01-01    NA NZ     
+##  6 1956-04-01    NA NZ     
+##  7 1956-07-01    NA NZ     
+##  8 1956-10-01    NA NZ     
+##  9 1957-01-01    NA NZ     
+## 10 1957-04-01    NA NZ     
 ## # ... with 2,024 more rows</code></pre>
 <p>Great! Let’s plot it.</p>
 <pre class="r"><code>ggplot(df, aes(x = date, y = Value, colour = Country)) + geom_line()
