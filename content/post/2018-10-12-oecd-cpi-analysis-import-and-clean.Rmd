@@ -3,6 +3,9 @@ title: OECD CPI Analysis and Forecasting - Import and Clean
 author: ''
 date: '2018-10-12'
 slug: oecd-cpi-analysis-import-and-clean
+Summary: "Importing and Cleaning real world data sets"
+thumbnailImagePosition: left
+thumbnailImage: /img/OECD_logo_new.svg.pnd
 categories:
   - R
 tags:
